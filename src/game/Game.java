@@ -1,79 +1,48 @@
 package game;
 
 import city.cs.engine.*;
-import city.cs.engine.Shape;
-import org.jbox2d.common.Vec2;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
-import java.awt.*;
-import java.io.IOException;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-/**
- * Your main game entry point
- */
 public class Game {
 
+    // The world where the player and other objects will be in
+    private GameWorld world;
 
-    /** Initialise a new Game. */
+    // The view of the world that allows us to see everything
+    private GameView view;
+
     public Game() {
+        // Creating the world
+        GameWorld world = new GameWorld();
 
-        //1. make an empty game world
-        World world = new World();
+        // Creating the view
+        view = new GameView(world, 600, 600);
+        view.setZoom(20);
 
-        //2. populate it with bodies (ex: platforms, collectibles, characters)
+        // Creating the controller for the player
+        PlayerController controller = new PlayerController(world.getPlayer(), world);
+        view.addKeyListener(controller);
+        view.setFocusable(true);
+        view.requestFocus();
 
-        //make a ground platform
-        Shape shape = new BoxShape(30, 0.5f);
-        StaticBody ground = new StaticBody(world, shape);
-        ground.setPosition(new Vec2(0f, -11.5f));
-
-        // make a suspended platform
-        Shape platformShape = new BoxShape(3, 0.5f);
-        StaticBody platform1 = new StaticBody(world, platformShape);
-        platform1.setPosition(new Vec2(-8, -4f));
-
-        //make a character (with an overlaid image)
-        Shape studentShape = new BoxShape(1,2);
-        DynamicBody student = new DynamicBody(world, studentShape);
-        student.setPosition(new Vec2(4,-5));
-        student.addImage(new BodyImage("data/student.png", 4));
-
-
-        //3. make a view to look into the game world
-        UserView view = new UserView(world, 500, 500);
-
-
-        //optional: draw a 1-metre grid over the view
-        // view.setGridResolution(1);
-
-
-        //4. create a Java window (frame) and add the game
-        //   view to it
-        final JFrame frame = new JFrame("City Game");
+        // Created the frame for the game
+        final JFrame frame = new JFrame("Project Game");
         frame.add(view);
-
-        // enable the frame to quit the application
-        // when the x button is pressed
+        // Closes the game when the 'x' is pressed
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationByPlatform(true);
-        // don't let the frame be resized
+        // Prevents the view from being resized
         frame.setResizable(false);
-        // size the frame to fit the world view
+        // Fits the frame to the view
         frame.pack();
-        // finally, make the frame visible
+        // Makes it visible
         frame.setVisible(true);
 
-        //optional: uncomment this to make a debugging view
-         JFrame debugView = new DebugViewer(world, 500, 500);
-
-        // start our game world simulation!
         world.start();
     }
 
-    /** Run the game. */
+
     public static void main(String[] args) {
 
         new Game();
