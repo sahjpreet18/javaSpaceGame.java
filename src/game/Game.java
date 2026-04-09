@@ -17,7 +17,7 @@ public class Game {
         GameWorld world = new GameWorld();
 
         // Creating the view
-        view = new GameView(world, 600, 600);
+        view = new GameView(world, world.getPlayer(), 600, 600);
         view.setZoom(20);
 
         // Creating the controller for the player
@@ -32,7 +32,7 @@ public class Game {
         // Closes the game when the 'x' is pressed
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationByPlatform(true);
-        // Prevents the view from being resized
+        // Prevents the view from being resizedbv
         frame.setResizable(false);
         // Fits the frame to the view
         frame.pack();

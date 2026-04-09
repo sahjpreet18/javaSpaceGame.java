@@ -9,8 +9,9 @@ import java.awt.event.KeyListener;
 public class PlayerController implements KeyListener, StepListener {
 
     private static final float ROTATION_SPEED = 4;
-    private static final float THRUST = 2;
+    private static final float THRUST = 8;
     private static final float BOOST = 6;
+    private static final float MAX_SPEED = 20;
     private static float stamina = 3000;
     private static float acceleration;
 
@@ -82,15 +83,21 @@ public class PlayerController implements KeyListener, StepListener {
         }
         if (upDown) {
             applyThrust();
-        } else if (stamina < 3000) {
-            // Allows stamina to recover if the player is not applying thrust
-            stamina += 1;
         }
+
+        friction();
+
+        capSpeed();
+
         wrapAround();
     }
 
     @Override
     public void postStep(StepEvent e) {}
+
+    private void friction() {
+        player.setLinearVelocity(player.getLinearVelocity().mul(0.99f));
+    }
 
     private void applyThrust() {
         if (shiftDown && stamina > 0) {
@@ -99,17 +106,31 @@ public class PlayerController implements KeyListener, StepListener {
             stamina -= 5;
         } else {
             acceleration = THRUST;
+            if (stamina <= 3000) {
+                stamina += 1;
+            }
         }
         // Finds the players angle and uses trigonometry to apply the correct force to both the x and y axis
         float angle = player.getAngle();
         float x = (float) Math.cos(angle);
         float y = (float) Math.sin(angle);
         player.applyForce(new Vec2(x * acceleration, y * acceleration));
+
     }
 
 
     public static float getStamina() {
         return stamina;
+    }
+
+    private void capSpeed() {
+        Vec2 v = player.getLinearVelocity();
+        float speed = v.length();
+
+        if (speed > MAX_SPEED) {
+            Vec2 limited = v.mul(MAX_SPEED / speed);
+            player.setLinearVelocity(limited);
+        }
     }
 
     private void wrapAround() {
@@ -135,4 +156,7 @@ public class PlayerController implements KeyListener, StepListener {
         player.setPosition(new Vec2(x, y));
     }
 
+    public static float getMaxSpeed() {
+        return MAX_SPEED;
+    }
 }
