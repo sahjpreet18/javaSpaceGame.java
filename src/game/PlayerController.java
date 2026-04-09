@@ -13,6 +13,8 @@ public class PlayerController implements KeyListener, StepListener {
     private static final float BOOST = 6;
     private static final float MAX_SPEED = 20;
     private static float stamina = 3000;
+    private static final float staminaRecover = 2;
+    private static final float staminaUse = 5+staminaRecover;
     private static float acceleration;
 
     private final Player player;
@@ -85,6 +87,8 @@ public class PlayerController implements KeyListener, StepListener {
             applyThrust();
         }
 
+        recoverStamina();
+
         friction();
 
         capSpeed();
@@ -103,12 +107,9 @@ public class PlayerController implements KeyListener, StepListener {
         if (shiftDown && stamina > 0) {
             // Checks if the player is trying to boost and if they have stamina to apply it
             acceleration = THRUST + BOOST;
-            stamina -= 5;
+            stamina -= staminaUse;
         } else {
             acceleration = THRUST;
-            if (stamina <= 3000) {
-                stamina += 1;
-            }
         }
         // Finds the players angle and uses trigonometry to apply the correct force to both the x and y axis
         float angle = player.getAngle();
@@ -118,6 +119,11 @@ public class PlayerController implements KeyListener, StepListener {
 
     }
 
+    private void recoverStamina() {
+        if (stamina <= 3000) {
+            stamina += staminaRecover;
+        }
+    }
 
     public static float getStamina() {
         return stamina;
