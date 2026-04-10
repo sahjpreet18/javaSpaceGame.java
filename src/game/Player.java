@@ -13,6 +13,19 @@ public class Player extends DynamicBody {
 
     private int lives;
 
+    public void loseLife() {
+        lives--;
+        System.out.println("Lives left: " + lives);
+
+        if (lives <= 0) {
+            System.out.println("GAME OVER");
+        }
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
     public Player(World world) {
         super(world, playerShape);
 
