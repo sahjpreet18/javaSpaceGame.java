@@ -18,7 +18,7 @@ public class Coin extends StaticBody {
         sensor.addSensorListener(new CoinPickup(this));
 
         // Visible image placed on top of the sensor
-        addImage(new BodyImage("data/coin.png", 1.0f));
+        addImage(new BodyImage("data/Coin.png", 1.0f));
     }
 
     public void respawnCoin() {
@@ -27,6 +27,5 @@ public class Coin extends StaticBody {
         float x = ((float) Math.random() * 29f) - 14.5f;
         float y = ((float) Math.random() * 25f) - 14.5f;
         this.setPosition(new Vec2(x, y));
-        System.out.println(x + " " + y);
     }
 }

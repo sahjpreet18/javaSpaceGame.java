@@ -1,17 +1,32 @@
 package game;
 
 import city.cs.engine.*;
-import org.jbox2d.common.Vec2;
 
 public class Player extends DynamicBody {
     private static final Shape playerShape = new PolygonShape(
-            0.75f, 0f,
-            -0.75f, 0.5f,
-            -0.75f, -0.5f);
+            -0.75f, 0.55f,
+            -0.75f, -0.5f,
+            -0.5f, -0.7f,
+            0.75f, -0.45f,
+            1.15f, -0.1f,
+            1.15f, 0.15f,
+            0.75f, 0.5f,
+            -0.5f, 0.75f);
 
     private int points;
 
     private int lives;
+
+    public Player(World world) {
+        super(world, playerShape);
+        addImage(new BodyImage("data/Rocket_Still.png", 1.5f));
+
+        // Makes it so that the player is not affected by gravity
+        super.setGravityScale(0);
+
+        this.points = 0;
+        this.lives = 3;
+    }
 
     public void loseLife() {
         lives--;
@@ -24,15 +39,5 @@ public class Player extends DynamicBody {
 
     public int getLives() {
         return lives;
-    }
-
-    public Player(World world) {
-        super(world, playerShape);
-
-        // Makes it so that the player is not affected by gravity
-        super.setGravityScale(0);
-
-        this.points = 0;
-        this.lives = 3;
     }
 }
