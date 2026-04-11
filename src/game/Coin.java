@@ -11,17 +11,22 @@ public class Coin extends StaticBody {
     private static final Shape coinShape = new CircleShape(0.5f);
 
     public Coin(World world) {
-        // Creates a yellow coin
-        super(world,coinShape);
-        super.setFillColor(Color.yellow);
-        super.setLineColor(Color.yellow);
+        super(world);
+
+        // Creates an invisible sensor for the coin
+        Sensor sensor = new Sensor(this, coinShape);
+        sensor.addSensorListener(new CoinPickup(this));
+
+        // Visible image placed on top of the sensor
+        addImage(new BodyImage("data/coin.png", 1.0f));
     }
 
     public void respawnCoin() {
 
-        // Spawns the coin in a random position on the world
-        float x = ((float)Math.random()-0.5f) * 29;
-        float y = ((float)Math.random()-0.5f) * 29;
+        // Spawns the coin in a random position within the borders
+        float x = ((float) Math.random() * 29f) - 14.5f;
+        float y = ((float) Math.random() * 25f) - 14.5f;
         this.setPosition(new Vec2(x, y));
+        System.out.println(x + " " + y);
     }
 }

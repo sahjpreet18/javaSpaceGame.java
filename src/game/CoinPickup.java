@@ -2,7 +2,7 @@ package game;
 
 import city.cs.engine.*;
 
-public class CoinPickup implements CollisionListener {
+public class CoinPickup implements SensorListener {
 
     private Coin coin;
 
@@ -11,11 +11,16 @@ public class CoinPickup implements CollisionListener {
     }
 
     @Override
-    public void collide(CollisionEvent e) {
+    public void beginContact(SensorEvent e) {
         // If the coin and player collide then the respawnCoin method is called
-        if (e.getOtherBody() instanceof Player) {
+        if (e.getContactBody() instanceof Player) {
+            System.out.println("yes");
             coin.respawnCoin();
         }
+    }
+
+    @Override
+    public void endContact(SensorEvent sensorEvent) {
     }
 
 }

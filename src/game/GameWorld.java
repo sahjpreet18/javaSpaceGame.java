@@ -27,8 +27,8 @@ public class GameWorld extends World implements StepListener {
         this.coin2.respawnCoin();
 
         //Listens for collisions between the coins and the player
-        coin1.addCollisionListener(new CoinPickup(coin1));
-        coin2.addCollisionListener(new CoinPickup(coin2));
+        //coin1.addCollisionListener(new CoinPickup(coin1));
+        //coin2.addCollisionListener(new CoinPickup(coin2));
     }
 
     public Player getPlayer() {
