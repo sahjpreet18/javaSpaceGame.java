@@ -12,6 +12,7 @@ public class GameWorld extends World implements StepListener {
     private Coin coin1;
     private Coin coin2;
 
+    private boolean gameOver = false;
     private boolean paused = false;
     private Map<Body, Vec2> savedVelocities = new HashMap<>();
     private Map<Body, Float> savedAngular = new HashMap<>();
@@ -116,6 +117,14 @@ public class GameWorld extends World implements StepListener {
     }
     public Difficulty getDifficulty() {
         return difficulty;
+    }
+
+    public void gameOver() {
+        paused = true;
+        gameOver = true;
+    }
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     @Override

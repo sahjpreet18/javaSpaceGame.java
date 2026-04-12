@@ -19,9 +19,13 @@ public class Player extends DynamicBody {
     private int lives;
     private int bullets = 3;
 
-    public Player(World world) {
-        super(world, playerShape);
+    private GameWorld world;
+
+    public Player(GameWorld gameWorld) {
+        super(gameWorld, playerShape);
         addImage(rocketStill);
+
+        this.world = gameWorld;
 
         this.points = 0;
         this.lives = 3;
@@ -37,6 +41,9 @@ public class Player extends DynamicBody {
 
     public void loseLife() {
         lives--;
+        if (lives <= 0) {
+            world.gameOver();
+        }
     }
 
     public int getLives() {

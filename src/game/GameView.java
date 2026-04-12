@@ -6,16 +6,23 @@ import org.jbox2d.common.Vec2;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class GameView extends UserView implements MouseListener{
 
     private Player player;
     private Image background;
     private Rectangle menuButton = new Rectangle(0, 0, 60, 30);
+
     private boolean menuOpen = false;
     private JPanel menuPanel;
-    private GameWorld world;
+    private JPanel gameOverPanel;
+    private JTextField nameField;
 
+    private GameWorld world;
 
     public GameView(World world, Player player, int width, int height) {
         super(world, width, height);
@@ -23,6 +30,7 @@ public class GameView extends UserView implements MouseListener{
         this.world = (GameWorld) world;
         addMouseListener(this);
         setupMenuPanel();
+        setupGameOverPanel();
         // Gets the background from the data file
         this.background = new ImageIcon("data/Space_Background.png").getImage();
     }
@@ -157,9 +165,15 @@ public class GameView extends UserView implements MouseListener{
 
         g.setFont(new Font("Arial", Font.BOLD, 14));
         g.drawString("MENU", menuButton.x + 10, menuButton.y + 20);
+
+        // --- GAME OVER PANEL ---
+        if (world.isGameOver()) {
+            gameOverPanel.setVisible(true);
+        }
+
     }
 
-    private void setupMenuPanel() {
+    private void setupMenuPanel() { // Setup for the menu panel
         menuPanel = new JPanel();
         menuPanel.setLayout(new GridLayout(3, 1, 10, 10));
         menuPanel.setBackground(new Color(0, 0, 0, 180));
@@ -171,6 +185,7 @@ public class GameView extends UserView implements MouseListener{
         String[] difficulties = {"Easy", "Normal", "Hard"};
         JComboBox<String> difficultyBox = new JComboBox<>(difficulties);
         difficultyBox.setSelectedItem("Normal"); // The default is normal
+        JButton highScores = new JButton("High Scores");
 
         resume.addActionListener(e -> closeMenu()); // Closing the menu resumes the game
         restart.addActionListener(e -> restartGame()); // Restarting the game
@@ -183,11 +198,13 @@ public class GameView extends UserView implements MouseListener{
                         case "Hard" -> world.setDifficulty(GameWorld.Difficulty.HARD);
                     }
                 });
+        highScores.addActionListener(e -> showHighScores());
 
         menuPanel.add(resume);
         menuPanel.add(restart);
         menuPanel.add(quit);
         menuPanel.add(difficultyBox);
+        menuPanel.add(highScores);
 
         menuPanel.setVisible(false);
         this.setLayout(null);
@@ -205,8 +222,65 @@ public class GameView extends UserView implements MouseListener{
         world.setPaused(false);
         menuPanel.setVisible(false);
     }
+
     private void restartGame() {
         SwingUtilities.getWindowAncestor(this).dispose(); // restarts the game by resetting it all
         new Game();
+    }
+
+    private void showHighScores() {
+        StringBuilder sb = new StringBuilder();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("highscores.txt"))) { // reads the text file
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+        } catch (IOException e) { // if there are no scores in the file
+            sb.append("No scores yet!");
+        }
+
+        JOptionPane.showMessageDialog(this, sb.toString(), "High Scores", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    private void setupGameOverPanel() { // Setup for the game over panel
+        gameOverPanel = new JPanel();
+        gameOverPanel.setLayout(new GridLayout(4, 1, 10, 10));
+        gameOverPanel.setBackground(new Color(0, 0, 0, 180));
+        gameOverPanel.setBounds(200, 150, 300, 250);
+
+        JLabel over = new JLabel("GAME OVER", SwingConstants.CENTER);
+        over.setForeground(Color.white);
+        over.setFont(new Font("Arial", Font.BOLD, 24));
+
+        nameField = new JTextField("Enter your name"); // Name input
+
+        JButton save = new JButton("Save Score"); // Can save the score for the scoreboard
+        JButton restart = new JButton("Restart");
+        JButton quit = new JButton("Quit");
+
+        save.addActionListener(e -> saveScore());
+        restart.addActionListener(e -> restartGame());
+        quit.addActionListener(e -> System.exit(0));
+
+        gameOverPanel.add(over);
+        gameOverPanel.add(nameField);
+        gameOverPanel.add(save);
+        gameOverPanel.add(restart);
+
+        gameOverPanel.setVisible(false);
+        this.setLayout(null);
+        this.add(gameOverPanel);
+    }
+
+    private void saveScore() {
+        String name = nameField.getText();
+        int score = player.getPoints();
+
+        try (FileWriter fw = new FileWriter("highscores.txt", true)) { // Saves scores to text file
+            fw.write(name + " - " + score + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
