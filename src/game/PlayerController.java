@@ -9,13 +9,14 @@ import java.awt.event.KeyListener;
 public class PlayerController implements KeyListener, StepListener {
 
     private static final float ROTATION_SPEED = 4;
-    private static final float THRUST = 8;
-    private static final float BOOST = 6;
+    private static final float THRUST = 16;
+    private static final float BOOST = 12;
     private static final float MAX_SPEED = 20;
     private static float stamina = 3000;
     private static final float staminaRecover = 2;
     private static final float staminaUse = 5+staminaRecover;
     private static float acceleration;
+    private static boolean thrustImgActive = false;
 
     private final Player player;
 
@@ -60,6 +61,7 @@ public class PlayerController implements KeyListener, StepListener {
                 break;
             case KeyEvent.VK_UP, KeyEvent.VK_W:
                 upDown = false;
+                applyStillImg();
                 break;
             case KeyEvent.VK_SHIFT:
                 shiftDown = false;
@@ -85,6 +87,7 @@ public class PlayerController implements KeyListener, StepListener {
         }
         if (upDown) {
             applyThrust();
+            changeImg();
         }
 
         recoverStamina();
@@ -129,7 +132,7 @@ public class PlayerController implements KeyListener, StepListener {
         return stamina;
     }
 
-    private void capSpeed() {
+    private void capSpeed() { // caps the maximum speed of the player
         Vec2 v = player.getLinearVelocity();
         float speed = v.length();
 
@@ -139,7 +142,7 @@ public class PlayerController implements KeyListener, StepListener {
         }
     }
 
-    private void wrapAround() {
+    private void wrapAround() { // prevents the player from going offscreen
         Vec2 pos = player.getPosition();
 
         float limit = 15f;
@@ -162,7 +165,23 @@ public class PlayerController implements KeyListener, StepListener {
         player.setPosition(new Vec2(x, y));
     }
 
-    public static float getMaxSpeed() {
+    public static float getMaxSpeed() { // returns the max speed of the player
         return MAX_SPEED;
+    }
+
+    public void changeImg() { // Swaps between images to make a flickering effect
+        if (thrustImgActive) {
+            player.removeAllImages();
+            player.addImage(player.getRocketStill());
+            thrustImgActive = false;
+        } else {
+            player.removeAllImages();
+            player.addImage(player.getRocketMoving());
+            thrustImgActive = true;
+        }
+    }
+    public void applyStillImg() { // Applies the still rocket image once the up arrow is released
+            player.removeAllImages();
+            player.addImage(player.getRocketStill());
     }
 }

@@ -12,6 +12,8 @@ public class Player extends DynamicBody {
             1.15f, 0.15f,
             0.75f, 0.5f,
             -0.5f, 0.75f);
+    private final BodyImage rocketStill = new BodyImage("data/Rocket_Still.png", 1.5f);
+    private final BodyImage rocketMoving = new BodyImage("data/Rocket_Moving.png", 1.5f);
 
     private int points;
 
@@ -19,7 +21,8 @@ public class Player extends DynamicBody {
 
     public Player(World world) {
         super(world, playerShape);
-        addImage(new BodyImage("data/Rocket_Still.png", 1.5f));
+        addImage(rocketStill);
+        System.out.println(getImages());
 
         // Makes it so that the player is not affected by gravity
         super.setGravityScale(0);
@@ -39,5 +42,13 @@ public class Player extends DynamicBody {
 
     public int getLives() {
         return lives;
+    }
+
+    public BodyImage getRocketStill() {
+        return rocketStill;
+    }
+
+    public BodyImage getRocketMoving() {
+        return rocketMoving;
     }
 }
