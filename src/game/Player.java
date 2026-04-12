@@ -22,10 +22,6 @@ public class Player extends DynamicBody {
     public Player(World world) {
         super(world, playerShape);
         addImage(rocketStill);
-        System.out.println(getImages());
-
-        // Makes it so that the player is not affected by gravity
-        super.setGravityScale(0);
 
         this.points = 0;
         this.lives = 3;

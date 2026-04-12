@@ -32,7 +32,7 @@ public class Game {
         // Closes the game when the 'x' is pressed
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationByPlatform(true);
-        // Prevents the view from being resizedbv
+        // Prevents the view from being resized
         frame.setResizable(false);
         // Fits the frame to the view
         frame.pack();
