@@ -15,6 +15,7 @@ public class CoinPickup implements SensorListener {
         // If the coin and player collide then the respawnCoin method is called
         if (e.getContactBody() instanceof Player player) {
             player.addPoint();
+            ((GameWorld) coin.getWorld()).playCoinSound();
             coin.respawnCoin();
         }
     }

@@ -2,9 +2,10 @@ package game;
 
 import city.cs.engine.*;
 import org.jbox2d.common.Vec2;
+import city.cs.engine.SoundClip;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class GameWorld extends World implements StepListener {
 
@@ -19,6 +20,12 @@ public class GameWorld extends World implements StepListener {
 
     int asteroidTimer = 0;
     int bulletTimer = 0;
+
+    private SoundClip music;
+    private float volume = 0.5f; // default volume
+    private SoundClip coinSound;
+    private SoundClip shootSound;
+
 
     public enum Difficulty {
         EASY,
@@ -42,6 +49,19 @@ public class GameWorld extends World implements StepListener {
         // Adding the second coin into the world into a random location
         this.coin2 = new Coin(this);
         this.coin2.respawnCoin();
+
+        setDifficulty(difficulty);
+
+        try {
+            coinSound = new SoundClip("data/Coin_Collect.wav");
+            coinSound.setVolume(volume); // sets it to the current volume
+        } catch (Exception _) {}
+
+        try {
+            shootSound = new SoundClip("data/Shoot.wav");
+            shootSound.setVolume(volume); // sets it to current volume
+        } catch (Exception _) {}
+
     }
 
     public boolean isPaused() {
@@ -114,6 +134,12 @@ public class GameWorld extends World implements StepListener {
 
     public void setDifficulty(Difficulty d) {
         this.difficulty = d;
+
+        switch (d) {
+            case EASY -> playMusic("data/Stage_1.wav");
+            case NORMAL -> playMusic("data/Stage_2.wav");
+            case HARD -> playMusic("data/Stage_3.wav");
+        }
     }
     public Difficulty getDifficulty() {
         return difficulty;
@@ -125,6 +151,53 @@ public class GameWorld extends World implements StepListener {
     }
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    public void playMusic(String filePath) { // Playing background music
+        try {
+            if (music != null) {
+                music.stop();
+            }
+
+            music = new SoundClip(filePath);
+            music.setVolume(volume);
+            music.loop(); // loops forever
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setVolume(float volume) {
+        if (volume < 0.01) volume = 0.01f;
+
+        if (music != null) {
+            music.setVolume(volume);
+        }
+        if (coinSound != null) {
+            coinSound.setVolume(volume);
+        }
+        if (shootSound != null) {
+            shootSound.setVolume(volume);
+        }
+    }
+
+    public float getVolume() {
+        return volume;
+    }
+
+    public void playCoinSound() {
+        if (coinSound != null) {
+            coinSound.stop();  // makes it restart from beginning
+            coinSound.play();
+        }
+    }
+
+    public void playShootSound() {
+        if (shootSound != null) {
+            shootSound.stop();  // makes it restart from beginning
+            shootSound.play();
+        }
     }
 
     @Override

@@ -202,6 +202,7 @@ public class PlayerController implements KeyListener, StepListener {
             );
 
             new Projectile(world, spawnPos, angle);
+            world.playShootSound();
         }
     }
 }

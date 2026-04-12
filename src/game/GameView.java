@@ -19,6 +19,8 @@ public class GameView extends UserView implements MouseListener{
     private JPanel gameOverPanel;
     private JTextField nameField;
     private boolean scoreSaved = false;
+    private JPanel volumePanel;
+    private JSlider volumeSlider;
 
     private GameWorld world;
 
@@ -29,6 +31,7 @@ public class GameView extends UserView implements MouseListener{
         addMouseListener(this);
         setupMenuPanel();
         setupGameOverPanel();
+        setupVolumePanel();
         // Gets the background from the data file
         this.background = new ImageIcon("data/Space_Background.png").getImage();
     }
@@ -177,18 +180,18 @@ public class GameView extends UserView implements MouseListener{
         menuPanel.setBackground(new Color(0, 0, 0, 180));
         menuPanel.setBounds(200, 150, 200, 200);
 
-        JButton resume = new JButton("Resume");
-        JButton restart = new JButton("Restart");
-        JButton quit = new JButton("Quit");
-        String[] difficulties = {"Easy", "Normal", "Hard"};
+        JButton resume = new JButton("Resume"); // Button to continue the game again
+        JButton restart = new JButton("Restart"); // Button to restart the game
+        String[] difficulties = {"Easy", "Normal", "Hard"}; // Drop down options to pick difficulty
         JComboBox<String> difficultyBox = new JComboBox<>(difficulties);
         difficultyBox.setSelectedItem("Normal"); // The default is normal
-        JButton highScores = new JButton("High Scores");
+        JButton volumeButton = new JButton("Volume"); // Button to open volume menu
+        JButton highScores = new JButton("High Scores"); // Button to view scoreboard
+        JButton quit = new JButton("Quit"); // Button to exit the game
 
-        resume.addActionListener(e -> closeMenu()); // Closing the menu resumes the game
-        restart.addActionListener(e -> restartGame()); // Restarting the game
-        quit.addActionListener(e -> System.exit(0)); // To quit the game
-        difficultyBox.addActionListener(e -> { // Drop down to pick difficulty
+        resume.addActionListener(e -> closeMenu());
+        restart.addActionListener(e -> restartGame());
+        difficultyBox.addActionListener(e -> {
                     String choice = (String) difficultyBox.getSelectedItem();
                     switch (choice) {
                         case "Easy" -> world.setDifficulty(GameWorld.Difficulty.EASY);
@@ -196,13 +199,16 @@ public class GameView extends UserView implements MouseListener{
                         case "Hard" -> world.setDifficulty(GameWorld.Difficulty.HARD);
                     }
                 });
+        volumeButton.addActionListener(e -> showVolumeMenu());
         highScores.addActionListener(e -> showHighScores());
+        quit.addActionListener(e -> System.exit(0)); // To quit the game
 
         menuPanel.add(resume);
         menuPanel.add(restart);
-        menuPanel.add(quit);
         menuPanel.add(difficultyBox);
         menuPanel.add(highScores);
+        menuPanel.add(volumeButton);
+        menuPanel.add(quit);
 
         menuPanel.setVisible(false);
         this.setLayout(null);
@@ -286,5 +292,40 @@ public class GameView extends UserView implements MouseListener{
 
         HighScoreManager.saveScore(name, score);
         scoreSaved = true;
+    }
+
+    private void setupVolumePanel() { // Setup for the volume menu
+        volumePanel = new JPanel();
+        volumePanel.setLayout(new GridLayout(3, 1, 10, 10));
+        volumePanel.setBackground(new Color(0, 0, 0, 180));
+        volumePanel.setBounds(200, 150, 300, 200);
+
+        JLabel label = new JLabel("Volume", SwingConstants.CENTER);
+        label.setForeground(Color.white);
+        label.setFont(new Font("Arial", Font.BOLD, 20));
+
+        volumeSlider = new JSlider(0, 100, (int)(world.getVolume() * 100)); // Creates a slider that goes from 0-100
+        volumeSlider.addChangeListener(e -> {
+            float v = volumeSlider.getValue() / 100f;
+            world.setVolume(v); // Finds the value of the slider and sets the volume to it
+        });
+
+        JButton back = new JButton("Back"); // Back button to return to the main menu
+        back.addActionListener(e -> {
+            volumePanel.setVisible(false);
+            menuPanel.setVisible(true);
+        });
+
+        volumePanel.add(label);
+        volumePanel.add(volumeSlider);
+        volumePanel.add(back);
+
+        volumePanel.setVisible(false);
+        this.add(volumePanel);
+    }
+
+    private void showVolumeMenu() {
+        menuPanel.setVisible(false);
+        volumePanel.setVisible(true);
     }
 }
