@@ -229,7 +229,9 @@ public class GameView extends UserView implements MouseListener{
 
     private void restartGame() {
         SwingUtilities.getWindowAncestor(this).dispose(); // restarts the game by resetting it all
-        world.toggleMusicMute();
+        if (!world.isMusicMuted()){
+            world.toggleMusicMute();
+        }
         new Game();
     }
 
