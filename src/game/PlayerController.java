@@ -48,6 +48,9 @@ public class PlayerController implements KeyListener, StepListener {
             case KeyEvent.VK_SHIFT:
                 shiftDown = true;
                 break;
+            case KeyEvent.VK_SPACE:
+                shoot();
+                break;
         }
     }
 
@@ -181,8 +184,24 @@ public class PlayerController implements KeyListener, StepListener {
             thrustImgActive = true;
         }
     }
+
     public void applyStillImg() { // Applies the still rocket image once the up arrow is released
             player.removeAllImages();
             player.addImage(player.getRocketStill());
+    }
+
+    private void shoot() { // Fires the bullet projectile
+        if (!world.isPaused() && player.useBullet()) {
+
+            float angle = player.getAngle();
+
+            // Spawn slightly in front of the player
+            Vec2 spawnPos = player.getPosition().add(
+                    new Vec2((float)Math.cos(angle) * 1.5f,
+                            (float)Math.sin(angle) * 1.5f)
+            );
+
+            new Projectile(world, spawnPos, angle);
+        }
     }
 }

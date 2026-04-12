@@ -136,12 +136,14 @@ public class GameView extends UserView implements MouseListener{
         g.setColor(Color.black);
         g.drawRect(x, y, barWidth, barHeight);
 
-        // --- POINTS AND LIVES ---
+        // --- POINTS, LIVES AND BULLETS ---
         x = 20;
         y = 580;
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.BOLD, 18));
         g.drawString("POINTS:" + player.getPoints()+ "  LIVES:" + player.getLives(), x, y );
+        g.drawString("BULLETS: " + player.getBullets(), 160, 60);
+
 
         // --- MENU SYSTEM ---
         // Create the button in the top right

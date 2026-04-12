@@ -9,6 +9,9 @@ public class AsteroidCollision implements CollisionListener {
         if (e.getOtherBody() instanceof Player player) { // if an asteroid collides with the player it disappears
             player.loseLife(); // the player loses a life
             e.getReportingBody().destroy();
+        } else if (e.getOtherBody() instanceof Projectile) {
+            e.getReportingBody().destroy(); // destroy asteroid
+            e.getOtherBody().destroy();     // destroy projectile
         }
     }
 }

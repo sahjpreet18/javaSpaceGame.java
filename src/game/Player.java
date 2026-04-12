@@ -16,8 +16,8 @@ public class Player extends DynamicBody {
     private final BodyImage rocketMoving = new BodyImage("data/Rocket_Moving.png", 1.5f); // The two images for the rocket
 
     private int points;
-
     private int lives;
+    private int bullets = 3;
 
     public Player(World world) {
         super(world, playerShape);
@@ -49,5 +49,24 @@ public class Player extends DynamicBody {
 
     public BodyImage getRocketMoving() {
         return rocketMoving;
+    }
+
+    public void addBullet() {
+        bullets += 3;
+        if (bullets > 10) {
+            bullets = 10;
+        }
+    }
+
+    public boolean useBullet() {
+        if (bullets > 0) {
+            bullets--;
+            return true;
+        }
+        return false;
+    }
+
+    public int getBullets() {
+        return bullets;
     }
 }

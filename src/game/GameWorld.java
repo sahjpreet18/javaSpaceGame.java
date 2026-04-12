@@ -16,6 +16,9 @@ public class GameWorld extends World implements StepListener {
     private Map<Body, Vec2> savedVelocities = new HashMap<>();
     private Map<Body, Float> savedAngular = new HashMap<>();
 
+    int asteroidTimer = 0;
+    int bulletTimer = 0;
+
     public GameWorld() {
         this.addStepListener(this);
         this.setGravity(0);
@@ -97,8 +100,6 @@ public class GameWorld extends World implements StepListener {
         a.addCollisionListener(new AsteroidCollision());
     }
 
-    private int asteroidTimer = 0;
-
     @Override
     public void preStep(StepEvent e) {
         if (paused) { // freezes the game
@@ -117,9 +118,16 @@ public class GameWorld extends World implements StepListener {
         }
 
         asteroidTimer++;
-        if (asteroidTimer > 200) {
+        bulletTimer++;
+        if (asteroidTimer > 200) { // spawns asteroids at regular intervals
             spawnAsteroid();
             asteroidTimer = 0;
+        }
+        if (bulletTimer > 200) {
+            if (Math.random()<0.003) {
+                new Bullet(this).spawn();
+                bulletTimer = 0;
+            }
         }
     }
 
