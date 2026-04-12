@@ -21,6 +21,7 @@ public class GameView extends UserView implements MouseListener{
     private JPanel menuPanel;
     private JPanel gameOverPanel;
     private JTextField nameField;
+    private boolean scoreSaved = false;
 
     private GameWorld world;
 
@@ -273,7 +274,11 @@ public class GameView extends UserView implements MouseListener{
         this.add(gameOverPanel);
     }
 
-    private void saveScore() {
+    private void saveScore() { // prevents the user from submitting one score multiple times
+        if (scoreSaved) {
+            return;
+        }
+
         String name = nameField.getText();
         int score = player.getPoints();
 
@@ -282,5 +287,6 @@ public class GameView extends UserView implements MouseListener{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        scoreSaved = true;
     }
 }
