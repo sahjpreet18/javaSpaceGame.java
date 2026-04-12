@@ -14,11 +14,6 @@ public class HighScoreManager {
         // sort descending
         scores.sort((a, b) -> Integer.compare(b.score, a.score));
 
-        // keep only top 10
-        if (scores.size() > 10) {
-            scores = scores.subList(0, 10);
-        }
-
         saveScoresToFile(scores);
     }
 

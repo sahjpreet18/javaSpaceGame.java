@@ -250,7 +250,20 @@ public class GameView extends UserView implements MouseListener{
             sb.append("No scores yet!");
         }
 
-        JOptionPane.showMessageDialog(this, sb.toString(), "High Scores", JOptionPane.PLAIN_MESSAGE);
+        // Create a text area inside a scroll pane
+        JTextArea textArea = new JTextArea(sb.toString());
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setPreferredSize(new Dimension(300, 400)); // size of the popup
+
+        JOptionPane.showMessageDialog(
+                this,
+                scrollPane,
+                "High Scores",
+                JOptionPane.PLAIN_MESSAGE
+        );
     }
 
     private void setupGameOverPanel() { // Setup for the game over panel
