@@ -21,5 +21,4 @@ public class CoinPickup implements SensorListener {
     @Override
     public void endContact(SensorEvent sensorEvent) {
     }
-
 }
