@@ -136,13 +136,12 @@ public class GameView extends UserView implements MouseListener{
         g.setColor(Color.black);
         g.drawRect(x, y, barWidth, barHeight);
 
-        // --- POINTS, LIVES AND BULLETS ---
-        x = 20;
-        y = 580;
+        // --- POINTS, LIVES, BULLETS, DIFFICULTY ---
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.BOLD, 18));
-        g.drawString("POINTS:" + player.getPoints()+ "  LIVES:" + player.getLives(), x, y );
+        g.drawString("POINTS:" + player.getPoints()+ "  LIVES:" + player.getLives(), 20, 580 );
         g.drawString("BULLETS: " + player.getBullets(), 160, 60);
+        g.drawString("DIFFICULTY: " + world.getDifficulty(), 390, 580);
 
 
         // --- MENU SYSTEM ---
@@ -169,14 +168,26 @@ public class GameView extends UserView implements MouseListener{
         JButton resume = new JButton("Resume");
         JButton restart = new JButton("Restart");
         JButton quit = new JButton("Quit");
+        String[] difficulties = {"Easy", "Normal", "Hard"};
+        JComboBox<String> difficultyBox = new JComboBox<>(difficulties);
+        difficultyBox.setSelectedItem("Normal"); // The default is normal
 
         resume.addActionListener(e -> closeMenu()); // Closing the menu resumes the game
         restart.addActionListener(e -> restartGame()); // Restarting the game
         quit.addActionListener(e -> System.exit(0)); // To quit the game
+        difficultyBox.addActionListener(e -> { // Drop down to pick difficulty
+                    String choice = (String) difficultyBox.getSelectedItem();
+                    switch (choice) {
+                        case "Easy" -> world.setDifficulty(GameWorld.Difficulty.EASY);
+                        case "Normal" -> world.setDifficulty(GameWorld.Difficulty.NORMAL);
+                        case "Hard" -> world.setDifficulty(GameWorld.Difficulty.HARD);
+                    }
+                });
 
         menuPanel.add(resume);
         menuPanel.add(restart);
         menuPanel.add(quit);
+        menuPanel.add(difficultyBox);
 
         menuPanel.setVisible(false);
         this.setLayout(null);

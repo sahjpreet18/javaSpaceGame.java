@@ -42,7 +42,6 @@ public class Game {
         world.start();
     }
 
-
     public static void main(String[] args) {
 
         new Game();

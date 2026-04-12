@@ -19,6 +19,13 @@ public class GameWorld extends World implements StepListener {
     int asteroidTimer = 0;
     int bulletTimer = 0;
 
+    public enum Difficulty {
+        EASY,
+        NORMAL,
+        HARD
+    }
+    private Difficulty difficulty = Difficulty.NORMAL; // The base difficulty is normal
+
     public GameWorld() {
         this.addStepListener(this);
         this.setGravity(0);
@@ -93,11 +100,22 @@ public class GameWorld extends World implements StepListener {
         direction.normalize();
         // random speed between 3 and 8
         float speed = (float)(Math.random() * 5 + 3);
-
-        a.setLinearVelocity(direction.mul(speed));
+        float speedMultiplier = switch (difficulty) { // Changes the speeds based on difficulty
+            case EASY -> 0.7f;
+            case NORMAL -> 1.0f;
+            case HARD -> 1.5f;
+        };
+        a.setLinearVelocity(direction.mul(speed * speedMultiplier));
 
         // collision listener
         a.addCollisionListener(new AsteroidCollision());
+    }
+
+    public void setDifficulty(Difficulty d) {
+        this.difficulty = d;
+    }
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 
     @Override
@@ -118,11 +136,17 @@ public class GameWorld extends World implements StepListener {
         }
 
         asteroidTimer++;
-        bulletTimer++;
-        if (asteroidTimer > 200) { // spawns asteroids at regular intervals
+        int spawnThreshold = switch (difficulty) { // changes how fast asteroids spawn based on the difficulty
+            case EASY -> 300;   // slower spawns
+            case NORMAL -> 200;
+            case HARD -> 100;   // faster spawns
+        };
+        if (asteroidTimer > spawnThreshold) { // spawns asteroids at regular intervals
             spawnAsteroid();
             asteroidTimer = 0;
         }
+
+        bulletTimer++;
         if (bulletTimer > 200) {
             if (Math.random()<0.003) {
                 new Bullet(this).spawn();
