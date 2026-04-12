@@ -229,6 +229,7 @@ public class GameView extends UserView implements MouseListener{
 
     private void restartGame() {
         SwingUtilities.getWindowAncestor(this).dispose(); // restarts the game by resetting it all
+        world.toggleMusicMute();
         new Game();
     }
 
@@ -310,14 +311,27 @@ public class GameView extends UserView implements MouseListener{
             world.setVolume(v); // Finds the value of the slider and sets the volume to it
         });
 
+        JButton muteMusicButton = new JButton("Mute Music"); // Toggle button to mute music
+        JButton muteSfxButton = new JButton("Mute SFX"); // Toggle button to mute sound effects
         JButton back = new JButton("Back"); // Back button to return to the main menu
+
         back.addActionListener(e -> {
             volumePanel.setVisible(false);
             menuPanel.setVisible(true);
         });
+        muteMusicButton.addActionListener(e -> {
+            world.toggleMusicMute();
+            muteMusicButton.setText(world.isMusicMuted() ? "Unmute Music" : "Mute Music");
+        });
+        muteSfxButton.addActionListener(e -> {
+            world.toggleSfxMute();
+            muteSfxButton.setText(world.isSfxMuted() ? "Unmute SFX" : "Mute SFX");
+        });
 
         volumePanel.add(label);
         volumePanel.add(volumeSlider);
+        volumePanel.add(muteMusicButton);
+        volumePanel.add(muteSfxButton);
         volumePanel.add(back);
 
         volumePanel.setVisible(false);

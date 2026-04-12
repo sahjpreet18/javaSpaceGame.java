@@ -25,6 +25,10 @@ public class GameWorld extends World implements StepListener {
     private float volume = 0.5f; // default volume
     private SoundClip coinSound;
     private SoundClip shootSound;
+    private boolean musicMuted = false;
+    private boolean sfxMuted = false;
+    private float lastMusicVolume = 0.5f;
+    private float lastSfxVolume = 0.5f;
 
 
     public enum Difficulty {
@@ -32,6 +36,7 @@ public class GameWorld extends World implements StepListener {
         NORMAL,
         HARD
     }
+
     private Difficulty difficulty = Difficulty.NORMAL; // The base difficulty is normal
 
     public GameWorld() {
@@ -55,14 +60,16 @@ public class GameWorld extends World implements StepListener {
         try {
             coinSound = new SoundClip("data/Coin_Collect.wav");
             coinSound.setVolume(volume); // sets it to the current volume
-        } catch (Exception _) {}
+        } catch (Exception _) {
+        }
 
         try {
             shootSound = new SoundClip("data/Shoot.wav");
             shootSound.setVolume(volume); // sets it to current volume
-        } catch (Exception _) {}
-
+        } catch (Exception _) {
+        }
     }
+
 
     public boolean isPaused() {
         return paused;
@@ -100,18 +107,18 @@ public class GameWorld extends World implements StepListener {
         switch (side) {
             case 0: // left
                 x = -spawnDist;
-                y = (float)(Math.random() * (range * 2) - range);
+                y = (float) (Math.random() * (range * 2) - range);
                 break;
             case 1: // right
                 x = spawnDist;
-                y = (float)(Math.random() * (range * 2) - range);
+                y = (float) (Math.random() * (range * 2) - range);
                 break;
             case 2: // top
-                x = (float)(Math.random() * (range * 2) - range);
+                x = (float) (Math.random() * (range * 2) - range);
                 y = spawnDist;
                 break;
             default: // bottom
-                x = (float)(Math.random() * (range * 2) - range);
+                x = (float) (Math.random() * (range * 2) - range);
                 y = -spawnDist;
                 break;
         }
@@ -120,7 +127,7 @@ public class GameWorld extends World implements StepListener {
         Vec2 direction = new Vec2(-x, -y); // makes asteroids go towards the centre
         direction.normalize();
         // random speed between 3 and 8
-        float speed = (float)(Math.random() * 5 + 3);
+        float speed = (float) (Math.random() * 5 + 3);
         float speedMultiplier = switch (difficulty) { // Changes the speeds based on difficulty
             case EASY -> 0.7f;
             case NORMAL -> 1.0f;
@@ -141,6 +148,7 @@ public class GameWorld extends World implements StepListener {
             case HARD -> playMusic("data/Stage_3.wav");
         }
     }
+
     public Difficulty getDifficulty() {
         return difficulty;
     }
@@ -149,14 +157,18 @@ public class GameWorld extends World implements StepListener {
         paused = true;
         gameOver = true;
     }
+
     public boolean isGameOver() {
         return gameOver;
     }
 
-    public void playMusic(String filePath) { // Playing background music
+    public void playMusic(String filePath) {// Playing background music
         try {
             if (music != null) {
                 music.stop();
+            }
+            if (musicMuted) {
+                return;
             }
 
             music = new SoundClip(filePath);
@@ -168,12 +180,27 @@ public class GameWorld extends World implements StepListener {
         }
     }
 
+
     public void setVolume(float volume) {
+        if (!musicMuted) {
+            setMusicVolume(volume);
+        }
+        if (!sfxMuted) {
+            setSfxVolume(volume);
+        }
+    }
+
+    public void setMusicVolume(float volume) {
         if (volume < 0.01) volume = 0.01f;
 
         if (music != null) {
             music.setVolume(volume);
         }
+    }
+
+    public void setSfxVolume(float volume) {
+        if (volume < 0.01) volume = 0.01f;
+
         if (coinSound != null) {
             coinSound.setVolume(volume);
         }
@@ -186,17 +213,45 @@ public class GameWorld extends World implements StepListener {
         return volume;
     }
 
+    public boolean isMusicMuted() {
+        return musicMuted; }
+
+    public boolean isSfxMuted() {
+        return sfxMuted; }
+
+
     public void playCoinSound() {
-        if (coinSound != null) {
-            coinSound.stop();  // makes it restart from beginning
-            coinSound.play();
+        if (!sfxMuted) {
+            if (coinSound != null) {
+                coinSound.stop();  // makes it restart from beginning
+                coinSound.play();
+            }
         }
     }
 
     public void playShootSound() {
-        if (shootSound != null) {
-            shootSound.stop();  // makes it restart from beginning
-            shootSound.play();
+        if (!sfxMuted) {
+            if (shootSound != null) {
+                shootSound.stop();  // makes it restart from beginning
+                shootSound.play();
+            }
+        }
+    }
+
+    public void toggleMusicMute() {
+        if (!musicMuted) {
+            musicMuted = true;
+        } else {
+            musicMuted = false;
+        }
+        setDifficulty(this.difficulty);
+    }
+
+    public void toggleSfxMute() {
+        if (!sfxMuted) {
+            sfxMuted = true;
+        } else {
+            sfxMuted = false;
         }
     }
 
