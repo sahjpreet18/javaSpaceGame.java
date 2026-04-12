@@ -239,20 +239,12 @@ public class GameWorld extends World implements StepListener {
     }
 
     public void toggleMusicMute() {
-        if (!musicMuted) {
-            musicMuted = true;
-        } else {
-            musicMuted = false;
-        }
+        musicMuted = !musicMuted;
         setDifficulty(this.difficulty);
     }
 
     public void toggleSfxMute() {
-        if (!sfxMuted) {
-            sfxMuted = true;
-        } else {
-            sfxMuted = false;
-        }
+        sfxMuted = !sfxMuted;
     }
 
     @Override
