@@ -3,12 +3,18 @@ package game;
 import city.cs.engine.*;
 import org.jbox2d.common.Vec2;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GameWorld extends World implements StepListener {
 
     private Player player;
-
     private Coin coin1;
     private Coin coin2;
+
+    private boolean paused = false;
+    private Map<Body, Vec2> savedVelocities = new HashMap<>();
+    private Map<Body, Float> savedAngular = new HashMap<>();
 
     public GameWorld() {
         this.addStepListener(this);
@@ -25,10 +31,26 @@ public class GameWorld extends World implements StepListener {
         // Adding the second coin into the world into a random location
         this.coin2 = new Coin(this);
         this.coin2.respawnCoin();
+    }
 
-        //Listens for collisions between the coins and the player
-        //coin1.addCollisionListener(new CoinPickup(coin1));
-        //coin2.addCollisionListener(new CoinPickup(coin2));
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+
+        if (!paused) {
+            for (DynamicBody b : getDynamicBodies()) { // restore velocities
+                if (savedVelocities.containsKey(b)) {
+                    b.setLinearVelocity(savedVelocities.get(b));
+                    b.setAngularVelocity(savedAngular.get(b));
+                }
+            }
+
+            savedVelocities.clear();
+            savedAngular.clear();
+        }
     }
 
     public Player getPlayer() {
@@ -79,8 +101,22 @@ public class GameWorld extends World implements StepListener {
 
     @Override
     public void preStep(StepEvent e) {
-        asteroidTimer++;
+        if (paused) { // freezes the game
+            if (savedVelocities.isEmpty()) { // Saves the velocities of all bodies to resume them
+                for (DynamicBody b : getDynamicBodies()) {
+                    savedVelocities.put(b, b.getLinearVelocity());
+                    savedAngular.put(b, b.getAngularVelocity());
+                }
+            }
 
+            for (DynamicBody b : getDynamicBodies()) { // freeze all the bodies
+                b.setLinearVelocity(new Vec2(0,0));
+                b.setAngularVelocity(0);
+            }
+            return;
+        }
+
+        asteroidTimer++;
         if (asteroidTimer > 200) {
             spawnAsteroid();
             asteroidTimer = 0;

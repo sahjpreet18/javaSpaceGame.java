@@ -18,7 +18,8 @@ public class PlayerController implements KeyListener, StepListener {
     private static float acceleration;
     private static boolean thrustImgActive = false;
 
-    private final Player player;
+    private Player player;
+    private GameWorld world;
 
     private boolean leftDown = false;
     private boolean rightDown = false;
@@ -27,6 +28,7 @@ public class PlayerController implements KeyListener, StepListener {
 
     public PlayerController(Player player, World world) {
         this.player = player;
+        this.world = (GameWorld) world;
         world.addStepListener(this);
     }
 
@@ -74,6 +76,8 @@ public class PlayerController implements KeyListener, StepListener {
 
     @Override
     public void preStep(StepEvent e) {
+        if (world.isPaused()) return; // pauses the game
+
         // Stops the player from spinning out of control after hitting an object
         player.setAngularVelocity(0);
 
@@ -91,11 +95,8 @@ public class PlayerController implements KeyListener, StepListener {
         }
 
         recoverStamina();
-
         friction();
-
         capSpeed();
-
         wrapAround();
     }
 
