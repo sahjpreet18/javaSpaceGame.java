@@ -6,10 +6,7 @@ import org.jbox2d.common.Vec2;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.List;
 
 public class GameView extends UserView implements MouseListener{
 
@@ -230,14 +227,19 @@ public class GameView extends UserView implements MouseListener{
     }
 
     private void showHighScores() {
-        StringBuilder sb = new StringBuilder();
+        List<HighScoreManager.ScoreEntry> scores = HighScoreManager.loadScores();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader("highscores.txt"))) { // reads the text file
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-        } catch (IOException e) { // if there are no scores in the file
+        StringBuilder sb = new StringBuilder();
+        int rank = 1;
+
+        for (HighScoreManager.ScoreEntry entry : scores) { // reads text file
+            sb.append(rank).append(". ")
+                    .append(entry.name).append(" - ")
+                    .append(entry.score).append("\n");
+            rank++;
+        }
+
+        if (scores.isEmpty()) { // applies if list is empty
             sb.append("No scores yet!");
         }
 
@@ -282,11 +284,7 @@ public class GameView extends UserView implements MouseListener{
         String name = nameField.getText();
         int score = player.getPoints();
 
-        try (FileWriter fw = new FileWriter("highscores.txt", true)) { // Saves scores to text file
-            fw.write(name + " - " + score + "\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        HighScoreManager.saveScore(name, score);
         scoreSaved = true;
     }
 }
